@@ -7,10 +7,11 @@ package net.ausiasmarch.neptuno.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import net.ausiasmarch.neptuno.entity.Empleado;
 import net.ausiasmarch.neptuno.model.DBConnection;
 
@@ -21,16 +22,19 @@ import net.ausiasmarch.neptuno.model.DBConnection;
 public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
 
     private final Connection conn = DBConnection.instance.getConnection();
+    private String sentencia;
+    private PreparedStatement ps;
+    private ResultSet rs;
 
     @Override
     public void create(Empleado t) {
 
         try {
-            String sentencia = "INSERT INTO empleado (nombre,apellidos,ciudad,idCargo,fechaNa,"
-                    + "fechaAlta,idOficina,,email)"
+            sentencia = "INSERT INTO empleado (nombre,apellidos,ciudad,idCargo,fechaNa,"
+                    + "fechaAlta,idOficina,email)"
                     + " VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
 
-            PreparedStatement ps = conn.prepareStatement(sentencia);
+            ps = conn.prepareStatement(sentencia);
 
             ps.setString(1, t.getNombre());
             ps.setString(2, t.getApellidos());
@@ -40,20 +44,49 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
             ps.setDate(6, t.getNaci());
             ps.setInt(7, t.getIdOficina());
             ps.setString(8, t.getEmail());
+
+            ps.execute();
         } catch (SQLException ex) {
-            Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Se ha producido un error al insertar el registro");
         }
 
     }
 
     @Override
     public void update(Empleado t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            sentencia = "UPDATE empleado SET nombre = ?, apellidos = ?, ciudad = ?, idCargo = ?, fechaNa = ?,"
+                    + "fechaAlta = ?,idOficina = ?, email = ? WHERE idEmpleado = ?";
+
+            ps = conn.prepareStatement(sentencia);
+
+            ps.setString(1, t.getNombre());
+            ps.setString(2, t.getApellidos());
+            ps.setString(3, t.getCiudad());
+            ps.setInt(4, t.getIdCargo());
+            ps.setDate(5, t.getAlta());
+            ps.setDate(6, t.getNaci());
+            ps.setInt(7, t.getIdOficina());
+            ps.setString(8, t.getEmail());
+            ps.setLong(9, t.getNumEmple());
+            ps.execute();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Se ha producido un error al actualizar el registro");
+        }
     }
 
     @Override
     public void delete(Long id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        sentencia = "DELETE * FROM empleado WHERE idEmpleado = " + id;
+
+        try {
+            ps = conn.prepareStatement(sentencia);
+            ps.execute();
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Se ha producido un error al borrar el registro");
+        }
+
     }
 
     @Override
@@ -68,7 +101,28 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
 
     @Override
     public List<Empleado> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Empleado em;
+        List<Empleado> lista = new ArrayList<>();
+
+        sentencia = "SELECT idEmpleado,nombre,apellidos,ciudad,email,idCargo,idOficina,fechaNa,fechaAlta FROM empleado";
+
+        try {
+            ps = conn.prepareStatement(sentencia);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                em = new Empleado(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7), rs.getDate(8), rs.getDate(9));
+                lista.add(em);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Upps, algo ha ocurrido.");
+
+        }
+        return lista;
+    }
+
+    public EmpleadoDAO() {
     }
 
     @Override

@@ -3,20 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.ausiasmarch.neptuno.entity;
+
+import java.sql.Date;
 
 /**
  *
  * @author a048598270y
  */
 public class Empleado {
-    private long numEmple;
-    private String nombre,apellidos,ciudad,email,naci,alta;
-    private int idCargo,idOficina;
-    
 
-    public Empleado(long numEmple,String nombre,String apellidos,String ciudad,String email,int idCargo,int idOficina,String naci, String alta){
+    private long numEmple;
+    private String nombre, apellidos, ciudad, email;
+    private int idCargo, idOficina;
+    private Date naci, alta;
+
+    public Empleado(long numEmple, String nombre, String apellidos, String ciudad, String email, int idCargo, int idOficina, Date naci, Date alta) {
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.ciudad = ciudad;
@@ -26,25 +28,25 @@ public class Empleado {
         this.numEmple = numEmple;
         this.alta = alta;
         this.naci = naci;
-        
+
     }
 
-    public String getNaci() {
+    public Date getNaci() {
         return naci;
     }
 
-    public void setNaci(String naci) {
+    public void setNaci(Date naci) {
         this.naci = naci;
     }
 
-    public String getAlta() {
+    public Date getAlta() {
         return alta;
     }
 
-    public void setAlta(String alta) {
+    public void setAlta(Date alta) {
         this.alta = alta;
     }
-    
+
     public long getNumEmple() {
         return numEmple;
     }
@@ -100,6 +102,5 @@ public class Empleado {
     public void setIdOficina(int idOficina) {
         this.idOficina = idOficina;
     }
-    
-    
+
 }
