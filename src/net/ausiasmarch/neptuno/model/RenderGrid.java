@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -37,6 +38,7 @@ public class RenderGrid extends JLabel implements TableCellRenderer {
 
         // Si el objeto que nos pasan es un String, lo ponemos en le JLabel
         if (value instanceof String) {
+
             setText(" " + value.toString());
             setHorizontalAlignment(SwingConstants.LEFT);
         }
@@ -94,6 +96,25 @@ public class RenderGrid extends JLabel implements TableCellRenderer {
             setText(df.format((Date) value));
         }
 
+        if (value instanceof ImageIcon) {
+            ImageIcon icono = (ImageIcon) value;
+
+            setIcon(icono);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setText("");
+
+        }
+
+        if (value instanceof Date) {
+            setHorizontalAlignment(SwingConstants.CENTER);
+
+        }
+        if (row % 2 != 0) {
+            setBackground(new Color(242, 242, 242));
+
+        } else {
+            setBackground(Color.white);
+        }
         if (isSelected) {
             setBackground(Color.BLUE);
             setForeground(Color.WHITE);

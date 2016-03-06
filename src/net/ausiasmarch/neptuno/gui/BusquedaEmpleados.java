@@ -5,7 +5,14 @@
  */
 package net.ausiasmarch.neptuno.gui;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import net.ausiasmarch.neptuno.dao.EmpleadoDAO;
+import net.ausiasmarch.neptuno.entity.Empleado;
+import net.ausiasmarch.neptuno.model.RenderGrid;
 
 /**
  *
@@ -13,11 +20,23 @@ import javax.swing.JOptionPane;
  */
 public class BusquedaEmpleados extends javax.swing.JFrame {
 
+    ImageIcon anadir = new ImageIcon("añadir.png");
+    ImageIcon editar = new ImageIcon("editar.png");
+    ImageIcon eliminar = new ImageIcon("eliminar.png");
+    String[] cabecera = {"Empleado", "Nombre", "Ciudad", "Cargo", "Nacimiento", "Alta", "Oficina", "", ""};
+
     /**
      * Creates new form BusquedaEmpleados
      */
     public BusquedaEmpleados() {
         initComponents();
+        setTitle("Gestion de empleados");
+        busquedaInicial();
+        configuracionTabla();
+        setLocationRelativeTo(this);
+        pack();
+        jButtonNuevo.setIcon(anadir);
+
     }
 
     /**
@@ -42,15 +61,16 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jComboBoxOficina = new javax.swing.JComboBox();
         jComboBoxCargo = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        grid1 = new net.ausiasmarch.neptuno.model.Grid();
+        jButtonBuscar = new javax.swing.JButton();
         jButtonNuevo = new javax.swing.JButton();
         jButtonEstadistica = new javax.swing.JButton();
         jButtonLimpiar = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        grid1 = new net.ausiasmarch.neptuno.model.Grid();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 204));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Busqueda"));
@@ -77,7 +97,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
 
         jComboBoxCargo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jButton1.setText("BUSCAR");
+        jButtonBuscar.setText("BUSCAR");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -87,7 +107,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jButtonBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -107,7 +127,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextFieldNumEmple, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(jTextFieldNumEmple)
                             .addComponent(jTextFieldNaci))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -147,29 +167,16 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                             .addComponent(jTextFieldAlta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))))
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(jButtonBuscar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        grid1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Empleado", "Nombre", "Ciudad", "Cargo", "Nacimiento", "Alta", "Oficina", "Mail", "", ""
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        jButtonNuevo.setText("Nuevo");
+        jButtonNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNuevoActionPerformed(evt);
             }
         });
-        jScrollPane1.setViewportView(grid1);
-
-        jButtonNuevo.setText("Nuevo");
 
         jButtonEstadistica.setText("Estadistica");
 
@@ -181,6 +188,8 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                 jButtonSalirActionPerformed(evt);
             }
         });
+
+        jScrollPane2.setViewportView(grid1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -195,11 +204,12 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                         .addComponent(jButtonEstadistica)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonLimpiar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 193, Short.MAX_VALUE)
                         .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
-                .addContainerGap(24, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,7 +217,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonNuevo)
@@ -228,6 +238,31 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonSalirActionPerformed
 
+    private void jButtonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNuevoActionPerformed
+
+    }//GEN-LAST:event_jButtonNuevoActionPerformed
+
+    private void busquedaInicial() {
+        EmpleadoDAO empleado = new EmpleadoDAO();
+        List<Empleado> lista = empleado.findAll();
+        grid1.setColumnIdentifiers(cabecera);
+        int fila = 0;
+        for (Empleado e : lista) {
+            grid1.setValueAt(e.getNumEmple(), fila, 0);
+            grid1.setValueAt(e.getNombre() + " " + e.getApellidos(), fila, 1);
+            grid1.setValueAt(e.getCiudad(), fila, 2);
+            grid1.setValueAt(e.getIdCargo(), fila, 3);
+            grid1.setValueAt(e.getNaci(), fila, 4);
+            grid1.setValueAt(e.getAlta(), fila, 5);
+            grid1.setValueAt(e.getIdOficina(), fila, 6);
+            grid1.setValueAt(editar, fila, 7);
+            grid1.setValueAt(eliminar, fila, 8);
+            fila++;
+
+        }
+
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -244,7 +279,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.ausiasmarch.neptuno.model.Grid grid1;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonBuscar;
     private javax.swing.JButton jButtonEstadistica;
     private javax.swing.JButton jButtonLimpiar;
     private javax.swing.JButton jButtonNuevo;
@@ -258,10 +293,66 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextFieldAlta;
     private javax.swing.JTextField jTextFieldNaci;
     private javax.swing.JTextField jTextFieldNombre;
     private javax.swing.JTextField jTextFieldNumEmple;
     // End of variables declaration//GEN-END:variables
+
+    private void configuracionTabla() {
+
+        for (int i = 0; i < cabecera.length; i++) {
+            grid1.getColumnModel().getColumn(i).setCellRenderer(new RenderGrid());
+        }
+
+        grid1.widthColumn(0, 65);
+        grid1.widthColumn(1, 120);
+        grid1.widthColumn(2, 80);
+        grid1.widthColumn(3, 50);
+        grid1.widthColumn(4, 80);
+        grid1.widthColumn(5, 80);
+        grid1.widthColumn(7, 30);
+        grid1.widthColumn(8, 30);
+
+        grid1.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = grid1.rowAtPoint(e.getPoint());
+                int col = grid1.columnAtPoint(e.getPoint());
+                long id = (long) grid1.getValueAt(row, 0);
+
+                if (col == 7) {
+                    new MantEmpleados(null, true, id).setVisible(true);
+
+                }
+                if (col == 8) {
+                    new VentasEmpleados(null, true).setVisible(true);
+
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+
+        });
+
+    }
 }

@@ -14,15 +14,25 @@ import java.sql.Date;
 public class Empleado {
 
     private long numEmple;
-    private String nombre, apellidos, ciudad, email;
+    private String nombre, apellidos, ciudad, nombreOficina;
     private int idCargo, idOficina;
     private Date naci, alta;
 
-    public Empleado(long numEmple, String nombre, String apellidos, String ciudad, String email, int idCargo, int idOficina, Date naci, Date alta) {
+    /**
+     *
+     * @param numEmple
+     * @param nombre
+     * @param apellidos
+     * @param ciudad
+     * @param idCargo
+     * @param idOficina
+     * @param naci
+     * @param alta
+     */
+    public Empleado(long numEmple, String nombre, String apellidos, String ciudad, int idCargo, int idOficina, Date naci, Date alta) {
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.ciudad = ciudad;
-        this.email = email;
         this.idOficina = idOficina;
         this.idCargo = idCargo;
         this.numEmple = numEmple;
@@ -77,14 +87,6 @@ public class Empleado {
 
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public int getIdCargo() {

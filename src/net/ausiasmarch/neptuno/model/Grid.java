@@ -2,18 +2,18 @@ package net.ausiasmarch.neptuno.model;
 
 /**
  * Grid.java
- * 
+ *
  * @author Luis
  */
-
+import java.awt.Color;
 import java.awt.Rectangle;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableRowSorter;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableColumnModel;
 import java.awt.event.MouseEvent;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -22,12 +22,16 @@ import java.awt.event.MouseEvent;
 public class Grid extends JTable {
 
     private DefaultTableModel defaultTableModel = new DefaultTableModel();
-    private DefaultTableCellRenderer defaultTableCellRenderer =
-                      new DefaultTableCellRenderer();
+    private DefaultTableCellRenderer defaultTableCellRenderer
+            = new DefaultTableCellRenderer();
 
     // Constructor
     public SimpleTableModel getSimpleTableModel() {
         try {
+
+            setRowHeight(22);
+            setRowMargin(2);
+            getTableHeader().setBackground(Color.CYAN);
             return (SimpleTableModel) super.getModel();
         } catch (Exception ex) {
             super.setModel(new SimpleTableModel(super.getModel()));
