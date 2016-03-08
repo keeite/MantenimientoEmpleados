@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.ausiasmarch.neptuno.model.DBConnection;
+import net.ausiasmarch.neptuno.model.DriverType;
 
 /**
  *
@@ -22,10 +23,10 @@ import net.ausiasmarch.neptuno.model.DBConnection;
  */
 public class PedidoDAO implements GenericDAO {
 
-    String sentencia;
+    StringBuilder sentencia = new StringBuilder();
     PreparedStatement ps;
     ResultSet rs;
-    Connection con = DBConnection.instance.getConnection();
+    Connection con = DBConnection.instance.getConnection(DriverType.MYSQL);
 
     @Override
     public void create(Object t) {
@@ -51,14 +52,15 @@ public class PedidoDAO implements GenericDAO {
     public List<List> findById(Serializable id) {
         List<List> lista = new ArrayList<>();
         List datos;
-        sentencia = "SELECT d.idProducto,p.nombreProd,p.cantidadUnidad,d.precioE,d.cantidad ,"
-                + "SUM(d.cantidad * d.precioE) FROM detalle_pedido d,producto p "
-                + "WHERE p.idproducto = d.idproducto and d.idPedido = ? GROUP BY d.idproducto";
+        sentencia.delete(0, sentencia.length());
+        sentencia.append("SELECT d.idProducto,p.nombreProd,p.cantidadUnidad,d.precioE,d.cantidad,")
+                .append("SUM(d.cantidad * d.precioE) FROM detalle_pedido d,producto p ")
+                .append("WHERE p.idProducto = d.idProducto AND d.idPedido = ? GROUP BY D.IDPRODUCTO ;");
 
         try {
 
-            ps = con.prepareStatement(sentencia);
-            ps.setLong(1, (long) id);
+            ps = con.prepareStatement(sentencia.toString());
+            ps.setInt(1, (int) id);
             rs = ps.executeQuery();
 
             while (rs.next()) {
@@ -72,6 +74,7 @@ public class PedidoDAO implements GenericDAO {
 
         } catch (SQLException ex) {
             Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(sentencia.toString());
         }
 
         return lista;
@@ -89,11 +92,12 @@ public class PedidoDAO implements GenericDAO {
 
     public List<Integer> allPed(long id) {
         List pedidos = new ArrayList<>();
-        sentencia = "SELECT idPedido FROM pedido WHERE idEmpleado = ?";
+        sentencia.delete(0, sentencia.length());
+        sentencia.append("SELECT idPedido FROM pedido WHERE idEmpleado = ? ");
 
         try {
 
-            ps = con.prepareStatement(sentencia);
+            ps = con.prepareStatement(sentencia.toString());
 
             ps.setLong(1, id);
             rs = ps.executeQuery();

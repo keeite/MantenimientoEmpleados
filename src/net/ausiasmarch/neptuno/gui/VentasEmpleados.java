@@ -5,7 +5,9 @@
  */
 package net.ausiasmarch.neptuno.gui;
 
+import java.math.BigDecimal;
 import java.util.List;
+import net.ausiasmarch.common.Convert;
 import net.ausiasmarch.neptuno.dao.PedidoDAO;
 
 /**
@@ -13,7 +15,7 @@ import net.ausiasmarch.neptuno.dao.PedidoDAO;
  * @author Dani
  */
 public class VentasEmpleados extends javax.swing.JDialog {
-    
+
     long id; // Id del empleado
     PedidoDAO pedidos = new PedidoDAO();
 
@@ -26,6 +28,7 @@ public class VentasEmpleados extends javax.swing.JDialog {
         initComponents();
         setLocationRelativeTo(null);
         cargarComboBox();
+        iniciaGrid();
     }
 
     /**
@@ -41,11 +44,11 @@ public class VentasEmpleados extends javax.swing.JDialog {
         gridPedido = new net.ausiasmarch.neptuno.model.Grid();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jTextFieldIva = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        jTextFieldTotal = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jComboBoxPedidos = new javax.swing.JComboBox<>();
+        jComboBoxPedidos = new javax.swing.JComboBox<String>();
         jLabel4 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
@@ -76,13 +79,15 @@ public class VentasEmpleados extends javax.swing.JDialog {
 
         jLabel1.setText("IVA 21%");
 
-        jTextField1.setText("jTextField1");
-
         jLabel2.setText("Total");
 
-        jTextField2.setText("jTextField1");
-
         jLabel3.setText("Pedido nº");
+
+        jComboBoxPedidos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxPedidosItemStateChanged(evt);
+            }
+        });
 
         jLabel4.setText("Cliente");
 
@@ -118,11 +123,11 @@ public class VentasEmpleados extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(50, 50, 50)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jTextFieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(32, 32, 32)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jTextFieldIva, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
@@ -165,11 +170,11 @@ public class VentasEmpleados extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextFieldIva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonSalir))
                 .addGap(11, 11, 11))
         );
@@ -180,6 +185,28 @@ public class VentasEmpleados extends javax.swing.JDialog {
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
         dispose();
     }//GEN-LAST:event_jButtonSalirActionPerformed
+
+    private void jComboBoxPedidosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxPedidosItemStateChanged
+        List<List> lista = pedidos.findById(Integer.parseInt(jComboBoxPedidos.getSelectedItem().toString()));
+        int i = 0;
+        double suma = 0;
+        double iva;
+        gridPedido.clear();
+        for (List l : lista) {
+            gridPedido.setValueAt(l.get(0), i, 0);
+            gridPedido.setValueAt(l.get(1), i, 1);
+            gridPedido.setValueAt(l.get(2), i, 2);
+            gridPedido.setValueAt(l.get(3), i, 3);
+            gridPedido.setValueAt(l.get(4), i, 4);
+            gridPedido.setValueAt(l.get(5), i, 5);
+            i++;
+            suma += (double) l.get(5);
+        }
+        iva = suma * 0.21;
+        suma += iva;
+        jTextFieldIva.setText(Convert.format(iva, 2));
+        jTextFieldTotal.setText(Convert.format(suma, 2));
+    }//GEN-LAST:event_jComboBoxPedidosItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -235,19 +262,42 @@ public class VentasEmpleados extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextFieldIva;
+    private javax.swing.JTextField jTextFieldTotal;
     // End of variables declaration//GEN-END:variables
 
     private void cargarComboBox() {
         List<Integer> lista = pedidos.allPed(id);
-        
+
         for (Integer i : lista) {
             jComboBoxPedidos.addItem(Integer.toString(i));
         }
-        
+
+    }
+
+    private void iniciaGrid() {
+        System.out.println(jComboBoxPedidos.getSelectedItem().toString());
+        List<List> lista = pedidos.findById(Integer.parseInt(jComboBoxPedidos.getSelectedItem().toString()));
+        int i = 0;
+        BigDecimal suma = new BigDecimal(0);
+        BigDecimal iva = new BigDecimal(0);
+        for (List l : lista) {
+            gridPedido.setValueAt(l.get(0), i, 0);
+            gridPedido.setValueAt(l.get(1), i, 1);
+            gridPedido.setValueAt(l.get(2), i, 2);
+            gridPedido.setValueAt(l.get(3), i, 3);
+            gridPedido.setValueAt(l.get(4), i, 4);
+            gridPedido.setValueAt(l.get(5), i, 5);
+            i++;
+            suma.add((BigDecimal) l.get(5));
+        }
+
+        iva.add(suma.multiply(Convert.parseBigDecimal("0.21")));
+        suma.add(iva);
+        jTextFieldIva.setText(Convert.format(iva, 2));
+        jTextFieldTotal.setText(Convert.format(suma, 2));
     }
 }

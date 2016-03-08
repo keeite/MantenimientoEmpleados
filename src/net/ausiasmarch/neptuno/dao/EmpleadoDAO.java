@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import net.ausiasmarch.neptuno.entity.Empleado;
 import net.ausiasmarch.neptuno.model.DBConnection;
+import net.ausiasmarch.neptuno.model.DriverType;
 
 /**
  *
@@ -21,7 +22,7 @@ import net.ausiasmarch.neptuno.model.DBConnection;
  */
 public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
 
-    private final Connection conn = DBConnection.instance.getConnection();
+    private final Connection conn = DBConnection.instance.getConnection(DriverType.MYSQL);
     private String sentencia;
     private PreparedStatement ps;
     private ResultSet rs;
