@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import net.ausiasmarch.neptuno.entity.Empleado;
 import net.ausiasmarch.neptuno.model.DBConnection;
@@ -31,8 +33,8 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
 
         try {
             sentencia = "INSERT INTO empleado (nombre,apellidos,ciudad,idCargo,fechaNa,"
-                    + "fechaAlta,idOficina,email)"
-                    + " VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
+                    + "fechaAlta,idOficina)"
+                    + " VALUES ( ? , ? , ? , ? , ? , ? , ? )";
 
             ps = conn.prepareStatement(sentencia);
 
@@ -43,8 +45,6 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
             ps.setDate(5, t.getAlta());
             ps.setDate(6, t.getNaci());
             ps.setInt(7, t.getIdOficina());
-            ps.setString(8, t.getEmail());
-
             ps.execute();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Se ha producido un error al insertar el registro");
@@ -56,7 +56,7 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
     public void update(Empleado t) {
         try {
             sentencia = "UPDATE empleado SET nombre = ?, apellidos = ?, ciudad = ?, idCargo = ?, fechaNa = ?,"
-                    + "fechaAlta = ?,idOficina = ?, email = ? WHERE idEmpleado = ?";
+                    + "fechaAlta = ?,idOficina = ? WHERE idEmpleado = ?";
 
             ps = conn.prepareStatement(sentencia);
 
@@ -67,8 +67,7 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
             ps.setDate(5, t.getAlta());
             ps.setDate(6, t.getNaci());
             ps.setInt(7, t.getIdOficina());
-            ps.setString(8, t.getEmail());
-            ps.setLong(9, t.getNumEmple());
+            ps.setLong(8, t.getNumEmple());
             ps.execute();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Se ha producido un error al actualizar el registro");
@@ -104,14 +103,14 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
         Empleado em;
         List<Empleado> lista = new ArrayList<>();
 
-        sentencia = "SELECT idEmpleado,nombre,apellidos,ciudad,email,idCargo,idOficina,fechaNa,fechaAlta FROM empleado";
+        sentencia = "SELECT idEmpleado,nombre,apellidos,ciudad,idCargo,idOficina,fechaNa,fechaAlta FROM empleado";
 
         try {
             ps = conn.prepareStatement(sentencia);
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                em = new Empleado(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7), rs.getDate(8), rs.getDate(9));
+                em = new Empleado(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7), rs.getDate(8));
                 lista.add(em);
             }
 
@@ -127,7 +126,22 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
 
     @Override
     public <K> Long newKey() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        long key = 0;
+        
+        try {
+            
+            sentencia = "SELECT MAX(idEmpleado) FROM empleado";
+            
+            ps = conn.prepareStatement(sentencia);
+            rs = ps.executeQuery();
+            key = rs.getLong(1) + 1;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return key;
     }
 
 }

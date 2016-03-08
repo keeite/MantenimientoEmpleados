@@ -5,7 +5,10 @@
  */
 package net.ausiasmarch.neptuno.gui;
 
+import java.util.List;
 import javax.swing.JOptionPane;
+import net.ausiasmarch.neptuno.dao.EmpleadoDAO;
+import net.ausiasmarch.neptuno.entity.Empleado;
 
 /**
  *
@@ -13,11 +16,12 @@ import javax.swing.JOptionPane;
  */
 public class BusquedaEmpleados extends javax.swing.JFrame {
 
-    /**
-     * Creates new form BusquedaEmpleados
-     */
+    EmpleadoDAO empleadoDAO = new EmpleadoDAO();
+    
+    
     public BusquedaEmpleados() {
         initComponents();
+        iniciaGrid();
     }
 
     /**
@@ -43,12 +47,12 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         jComboBoxOficina = new javax.swing.JComboBox();
         jComboBoxCargo = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        grid1 = new net.ausiasmarch.neptuno.model.Grid();
         jButtonNuevo = new javax.swing.JButton();
         jButtonEstadistica = new javax.swing.JButton();
         jButtonLimpiar = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        gridEmpleados = new net.ausiasmarch.neptuno.model.Grid();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -151,24 +155,6 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        grid1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Empleado", "Nombre", "Ciudad", "Cargo", "Nacimiento", "Alta", "Oficina", "Mail", "", ""
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(grid1);
-
         jButtonNuevo.setText("Nuevo");
 
         jButtonEstadistica.setText("Estadistica");
@@ -182,6 +168,16 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
             }
         });
 
+        gridEmpleados.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(gridEmpleados);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -189,6 +185,8 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 647, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -196,25 +194,23 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonLimpiar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
+                        .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(15, 15, 15)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonNuevo)
                     .addComponent(jButtonEstadistica)
                     .addComponent(jButtonLimpiar)
                     .addComponent(jButtonSalir))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -241,9 +237,15 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void iniciaGrid() {
+        String[] columnas = {"Empleado", "Nombre", "Ciudad", "Cargo", "Nacimiento", "Alta", "Oficina", " ", " "};
+        List<Empleado> lista = empleadoDAO.findAll();
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private net.ausiasmarch.neptuno.model.Grid grid1;
+    private net.ausiasmarch.neptuno.model.Grid gridEmpleados;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonEstadistica;
     private javax.swing.JButton jButtonLimpiar;
@@ -258,10 +260,11 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextFieldAlta;
     private javax.swing.JTextField jTextFieldNaci;
     private javax.swing.JTextField jTextFieldNombre;
     private javax.swing.JTextField jTextFieldNumEmple;
     // End of variables declaration//GEN-END:variables
+
 }
