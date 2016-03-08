@@ -29,15 +29,16 @@ public class DBConnection {
     /**
      * Obtiene una conexion a la BD
      *
+     * @param driver    el driver para el tipo de base de datos usada
      * @return Connection
      */
-    public Connection getConnection() {
+    public Connection getConnection(DriverType driver) {
         // Propiedades de conexion de BD
         Properties prop;
 
         try {
             // Obtiene las propiedaesde conexion
-            prop = getProperties();
+            prop = getProperties(driver);
             // Carga la clase correspondiente al driver de BD
             Class.forName(prop.getProperty("driver"));
             // Obtiene la conexion a la BD
@@ -68,14 +69,28 @@ public class DBConnection {
      *
      * @return Properties
      */
-    private Properties getProperties() {
+    private Properties getProperties(DriverType driver) {
         // InputStrean para leer el archivo de configuracion de BD
         InputStream config = null;
+        
+        String path = null;
+        
         try {
+            
             // Propiedades de conexion de BD
             Properties prop = new Properties();
+            
             // Path del archivo de configuracion de BD
-            String path = "net/ausiasmarch/neptuno/res/configAccessJDBC.properties";
+            switch (driver) {
+                case ACCESS:
+                    path = "net/ausiasmarch/neptuno/res/configAccessJDBC.properties";
+                    break;
+                    
+                case MYSQL:
+                    path = "net/ausiasmarch/neptuno/res/configMySQL.properties";
+                    break;
+            }
+            
             // InputStrean para leer el archivo de configuracion de BD
             config = null;
             // Carga el InputStrean del archivo de configuracion de BD
