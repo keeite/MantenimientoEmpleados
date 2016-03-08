@@ -110,7 +110,7 @@ public class RenderGrid extends JLabel implements TableCellRenderer {
 
         }
         if (row % 2 != 0) {
-            setBackground(new Color(242, 242, 242));
+            setBackground(new Color(225, 225, 225));
 
         } else {
             setBackground(Color.white);
