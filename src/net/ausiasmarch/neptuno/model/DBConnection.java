@@ -29,7 +29,6 @@ public class DBConnection {
     /**
      * Obtiene una conexion a la BD
      *
-     * @param driver    el driver para el tipo de base de datos usada
      * @return Connection
      */
     public Connection getConnection(DriverType driver) {
@@ -72,25 +71,20 @@ public class DBConnection {
     private Properties getProperties(DriverType driver) {
         // InputStrean para leer el archivo de configuracion de BD
         InputStream config = null;
-        
         String path = null;
-        
         try {
-            
             // Propiedades de conexion de BD
             Properties prop = new Properties();
-            
             // Path del archivo de configuracion de BD
             switch (driver) {
                 case ACCESS:
                     path = "net/ausiasmarch/neptuno/res/configAccessJDBC.properties";
                     break;
-                    
                 case MYSQL:
                     path = "net/ausiasmarch/neptuno/res/configMySQL.properties";
                     break;
             }
-            
+
             // InputStrean para leer el archivo de configuracion de BD
             config = null;
             // Carga el InputStrean del archivo de configuracion de BD

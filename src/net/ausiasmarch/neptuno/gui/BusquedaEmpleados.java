@@ -7,6 +7,7 @@ package net.ausiasmarch.neptuno.gui;
 
 import java.util.List;
 import javax.swing.JOptionPane;
+import net.ausiasmarch.common.Convert;
 import net.ausiasmarch.neptuno.dao.EmpleadoDAO;
 import net.ausiasmarch.neptuno.entity.Empleado;
 
@@ -22,6 +23,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     public BusquedaEmpleados() {
         initComponents();
         iniciaGrid();
+        llenarComboBox();
     }
 
     /**
@@ -76,10 +78,6 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
 
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Oficina");
-
-        jComboBoxOficina.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jComboBoxCargo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton1.setText("BUSCAR");
 
@@ -241,6 +239,38 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     private void iniciaGrid() {
         String[] columnas = {"Empleado", "Nombre", "Ciudad", "Cargo", "Nacimiento", "Alta", "Oficina", " ", " "};
         List<Empleado> lista = empleadoDAO.findAll();
+        int fila = 0;
+        
+        gridEmpleados.setColumnIdentifiers(columnas);
+        
+        for (Empleado e : lista) {
+            gridEmpleados.setValueAt(e.getNumEmple(), fila, 0);
+            gridEmpleados.setValueAt(e.getNombre() + " " + e.getApellidos(), fila, 1);
+            gridEmpleados.setValueAt(e.getCiudad(), fila, 2);
+            gridEmpleados.setValueAt(e.getIdCargo(), fila, 3);
+            gridEmpleados.setValueAt(e.getNaci(), fila, 4);
+            gridEmpleados.setValueAt(e.getAlta(), fila, 5);
+            gridEmpleados.setValueAt(e.getIdOficina(), fila, 6);
+            
+            fila += 1;
+        }
+        
+    }
+    
+    private void llenarComboBox() {
+        
+        String cargo, oficina;
+        List<Empleado> lista = empleadoDAO.findAll();
+        
+        for (Empleado e : lista) {
+            cargo = Convert.format(e.getIdCargo());
+            jComboBoxCargo.addItem(cargo);
+        }
+        
+        for (Empleado e : lista) {
+            oficina = Convert.format(e.getIdOficina());
+            jComboBoxOficina.addItem(oficina);
+        }
         
     }
 
@@ -266,5 +296,6 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldNombre;
     private javax.swing.JTextField jTextFieldNumEmple;
     // End of variables declaration//GEN-END:variables
+
 
 }

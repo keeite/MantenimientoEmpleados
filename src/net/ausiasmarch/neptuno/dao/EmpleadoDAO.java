@@ -104,8 +104,8 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
         Empleado em;
         List<Empleado> lista = new ArrayList<>();
 
-        sentencia = "SELECT idEmpleado,nombre,apellidos,ciudad,idCargo,idOficina,fechaNa,fechaAlta FROM empleado";
-
+        sentencia = "SELECT idEmpleado,nombre,apellidos,ciudad,cargo,idOficina,fechaNa,fechaAlta FROM empleado";
+        
         try {
             ps = conn.prepareStatement(sentencia);
             rs = ps.executeQuery();
@@ -116,7 +116,7 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
             }
 
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Upps, algo ha ocurrido.");
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
         return lista;
