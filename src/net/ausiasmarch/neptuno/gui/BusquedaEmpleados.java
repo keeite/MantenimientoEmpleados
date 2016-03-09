@@ -237,20 +237,20 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     }
     
     private void iniciaGrid() {
-        String[] columnas = {"Empleado", "Nombre", "Ciudad", "Cargo", "Nacimiento", "Alta", "Oficina", " ", " "};
+        String[] columnas = {"Oficina", "Ciudad", "Id Empleado", "Nombre", "Cargo", "Nacimiento", "Alta", " ", " "};
         List<Empleado> lista = empleadoDAO.findAll();
         int fila = 0;
         
         gridEmpleados.setColumnIdentifiers(columnas);
         
         for (Empleado e : lista) {
-            gridEmpleados.setValueAt(e.getNumEmple(), fila, 0);
-            gridEmpleados.setValueAt(e.getNombre() + " " + e.getApellidos(), fila, 1);
-            gridEmpleados.setValueAt(e.getCiudad(), fila, 2);
-            gridEmpleados.setValueAt(e.getIdCargo(), fila, 3);
-            gridEmpleados.setValueAt(e.getNaci(), fila, 4);
-            gridEmpleados.setValueAt(e.getAlta(), fila, 5);
-            gridEmpleados.setValueAt(e.getIdOficina(), fila, 6);
+            gridEmpleados.setValueAt(e.getIdOficina(), fila, 0);
+            gridEmpleados.setValueAt(e.getCiudad(), fila, 1);   //ciudad de la oficina
+            gridEmpleados.setValueAt(e.getNumEmple(), fila, 2);
+            gridEmpleados.setValueAt(e.getNombre() + " " + e.getApellidos(), fila, 3);
+            gridEmpleados.setValueAt(e.getIdCargo(), fila, 4);  //nombre del cargo, no numero
+            gridEmpleados.setValueAt(e.getNaci(), fila, 5);
+            gridEmpleados.setValueAt(e.getAlta(), fila, 6);
             
             fila += 1;
         }
@@ -259,17 +259,16 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     
     private void llenarComboBox() {
         
-        String cargo, oficina;
-        List<Empleado> lista = empleadoDAO.findAll();
+        List<Integer> lista = empleadoDAO.idCargo();
         
-        for (Empleado e : lista) {
-            cargo = Convert.format(e.getIdCargo());
-            jComboBoxCargo.addItem(cargo);
+        for (int i = 0; i < lista.size(); i++) {
+            jComboBoxCargo.addItem(lista.get(i));
         }
         
-        for (Empleado e : lista) {
-            oficina = Convert.format(e.getIdOficina());
-            jComboBoxOficina.addItem(oficina);
+        lista = empleadoDAO.idOficina();
+        
+        for (int i = 0; i < lista.size(); i++) {
+            jComboBoxOficina.addItem(lista.get(i));
         }
         
     }

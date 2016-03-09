@@ -144,5 +144,52 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
 
         return key;
     }
+    
+    public List<Integer> idCargo() {
+        
+        List<Integer> lista = new ArrayList();
+        
+        try {
+            
+            sentencia = "SELECT DISTINCT idCargo FROM cargo ORDER BY idcargo";
+            
+            ps = conn.prepareStatement(sentencia);
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                lista.add(rs.getInt(1));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        return lista;
+    }
+    
+    public List<Integer> idOficina() {
+        
+        List<Integer> lista = new ArrayList();
+        
+        try {
+            
+            sentencia = "SELECT DISTINCT idOficina FROM oficina ORDER BY idOficina";
+            
+            ps = conn.prepareStatement(sentencia);
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                lista.add(rs.getInt(1));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(EmpleadoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        return lista;
+        
+    }
 
 }
