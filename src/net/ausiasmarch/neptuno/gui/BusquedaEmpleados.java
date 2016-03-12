@@ -11,7 +11,9 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import net.ausiasmarch.neptuno.dao.EmpleadoDAO;
+import net.ausiasmarch.neptuno.dao.OficinaDAO;
 import net.ausiasmarch.neptuno.entity.Empleado;
+import net.ausiasmarch.neptuno.entity.Oficina;
 import net.ausiasmarch.neptuno.model.RenderGrid;
 
 /**
@@ -23,7 +25,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     ImageIcon anadir = new ImageIcon("añadir.png");
     ImageIcon editar = new ImageIcon("editar.png");
     ImageIcon eliminar = new ImageIcon("eliminar.png");
-    String[] cabecera = {"Empleado", "Nombre", "Ciudad", "Cargo", "Nacimiento", "Alta", "Oficina", "", ""};
+    String[] cabecera = {"Oficina", "Ciudad", "Empleado", "Nombre", "Cargo", "Nacimiento", "Alta", "", ""};
 
     /**
      * Creates new form BusquedaEmpleados
@@ -33,6 +35,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         setTitle("Gestion de empleados");
         busquedaInicial();
         configuracionTabla();
+        initComboBox();
         setLocationRelativeTo(this);
         pack();
         jButtonNuevo.setIcon(anadir);
@@ -93,9 +96,9 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Oficina");
 
-        jComboBoxOficina.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxOficina.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "- Seleccionar -" }));
 
-        jComboBoxCargo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxCargo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "- Seleccionar -" }));
 
         jButtonBuscar.setText("BUSCAR");
 
@@ -189,6 +192,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
             }
         });
 
+        grid1.setAutoCreateRowSorter(true);
         jScrollPane2.setViewportView(grid1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -243,22 +247,28 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonNuevoActionPerformed
 
     private void busquedaInicial() {
-        EmpleadoDAO empleado = new EmpleadoDAO();
-        List<Empleado> lista = empleado.findAll();
+        EmpleadoDAO empleadoD = new EmpleadoDAO();
+        OficinaDAO oficinaD = new OficinaDAO();
+        List<Empleado> lista = empleadoD.findAll();
+        Oficina oficina;
         grid1.setColumnIdentifiers(cabecera);
         int fila = 0;
+        String ciudad;
         for (Empleado e : lista) {
-            grid1.setValueAt(e.getNumEmple(), fila, 0);
-            grid1.setValueAt(e.getNombre() + " " + e.getApellidos(), fila, 1);
-            grid1.setValueAt(e.getCiudad(), fila, 2);
-            grid1.setValueAt(e.getIdCargo(), fila, 3);
-            grid1.setValueAt(e.getNaci(), fila, 4);
-            grid1.setValueAt(e.getAlta(), fila, 5);
-            grid1.setValueAt(e.getIdOficina(), fila, 6);
+            oficina = oficinaD.findById((long) e.getIdOficina());
+
+            ciudad = (oficina == null ? "" : oficina.getCiudad());
+
+            grid1.setValueAt(e.getIdOficina(), fila, 0);
+            grid1.setValueAt(ciudad, fila, 1);
+            grid1.setValueAt(e.getNumEmple(), fila, 2);
+            grid1.setValueAt(e.getNombre() + " " + e.getApellidos(), fila, 3);
+            grid1.setValueAt(e.getIdCargo(), fila, 4);
+            grid1.setValueAt(e.getNaci(), fila, 5);
+            grid1.setValueAt(e.getAlta(), fila, 6);
             grid1.setValueAt(editar, fila, 7);
             grid1.setValueAt(eliminar, fila, 8);
             fila++;
-
         }
 
     }
@@ -307,10 +317,10 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         }
 
         grid1.widthColumn(0, 65);
-        grid1.widthColumn(1, 120);
-        grid1.widthColumn(2, 80);
-        grid1.widthColumn(3, 50);
-        grid1.widthColumn(4, 80);
+        grid1.widthColumn(1, 60);
+        grid1.widthColumn(2, 75);
+        grid1.widthColumn(3, 120);
+        grid1.widthColumn(4, 70);
         grid1.widthColumn(5, 80);
         grid1.widthColumn(7, 30);
         grid1.widthColumn(8, 30);
@@ -320,7 +330,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = grid1.rowAtPoint(e.getPoint());
                 int col = grid1.columnAtPoint(e.getPoint());
-                long id = (long) grid1.getValueAt(row, 0);
+                long id = (long) grid1.getValueAt(row, 2);
 
                 switch (col) {
                     case 7:
@@ -354,6 +364,16 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
             }
 
         });
+
+    }
+
+    private void initComboBox() {
+        OficinaDAO oficina = new OficinaDAO();
+        List<Oficina> listaOf = oficina.findAll();
+
+        for (Oficina o : listaOf) {
+            jComboBoxOficina.addItem(o.getCiudad());
+        }
 
     }
 }

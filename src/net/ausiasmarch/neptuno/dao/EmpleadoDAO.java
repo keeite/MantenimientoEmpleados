@@ -31,19 +31,18 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
     public void create(Empleado t) {
 
         try {
-            sentencia = "INSERT INTO empleado (nombre,apellidos,ciudad,idCargo,fechaNa,"
+            sentencia = "INSERT INTO empleado (nombre,apellidos,idCargo,fechaNa,"
                     + "fechaAlta,idOficina)"
-                    + " VALUES ( ? , ? , ? , ? , ? , ? , ? )";
+                    + " VALUES ( ? , ? , ? , ? , ? , ? )";
 
             ps = conn.prepareStatement(sentencia);
 
             ps.setString(1, t.getNombre());
             ps.setString(2, t.getApellidos());
-            ps.setString(3, t.getCiudad());
-            ps.setInt(4, t.getIdCargo());
-            ps.setDate(5, t.getAlta());
-            ps.setDate(6, t.getNaci());
-            ps.setInt(7, t.getIdOficina());
+            ps.setInt(3, t.getIdCargo());
+            ps.setDate(4, t.getAlta());
+            ps.setDate(5, t.getNaci());
+            ps.setInt(6, t.getIdOficina());
 
             ps.execute();
             conn.close();
@@ -56,14 +55,13 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
     @Override
     public void update(Empleado t) {
         try {
-            sentencia = "UPDATE empleado SET nombre = ?, apellidos = ?, ciudad = ?, idCargo = ?, fechaNa = ?,"
+            sentencia = "UPDATE empleado SET nombre = ?, apellidos = ?, idCargo = ?, fechaNa = ?,"
                     + "fechaAlta = ?,idOficina = ? WHERE idEmpleado = ?";
 
             ps = conn.prepareStatement(sentencia);
 
             ps.setString(1, t.getNombre());
             ps.setString(2, t.getApellidos());
-            ps.setString(3, t.getCiudad());
             ps.setInt(4, t.getIdCargo());
             ps.setDate(5, t.getAlta());
             ps.setDate(6, t.getNaci());
@@ -106,14 +104,14 @@ public class EmpleadoDAO implements GenericDAO<Empleado, Long> {
         Empleado em;
         List<Empleado> lista = new ArrayList<>();
 
-        sentencia = "SELECT idEmpleado,nombre,apellidos,ciudad,Cargo,idOficina,fechaNa,fechaAlta FROM empleado";
+        sentencia = "SELECT idEmpleado,nombre,apellidos,Cargo,idOficina,fechaNa,fechaAlta FROM empleado";
 
         try {
             ps = conn.prepareStatement(sentencia);
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                em = new Empleado(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getDate(7), rs.getDate(8));
+                em = new Empleado(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getInt(5), rs.getDate(6), rs.getDate(7));
                 lista.add(em);
             }
             conn.close();

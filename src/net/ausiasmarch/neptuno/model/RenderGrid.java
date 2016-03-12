@@ -98,7 +98,6 @@ public class RenderGrid extends JLabel implements TableCellRenderer {
 
         if (value instanceof ImageIcon) {
             ImageIcon icono = (ImageIcon) value;
-
             setIcon(icono);
             setHorizontalAlignment(SwingConstants.CENTER);
             setText("");

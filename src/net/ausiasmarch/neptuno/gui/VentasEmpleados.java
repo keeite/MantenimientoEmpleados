@@ -59,6 +59,7 @@ public class VentasEmpleados extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        gridPedido.setAutoCreateRowSorter(true);
         gridPedido.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -190,7 +191,7 @@ public class VentasEmpleados extends javax.swing.JDialog {
         List<List> lista = pedidos.findById(Integer.parseInt(jComboBoxPedidos.getSelectedItem().toString()));
         int i = 0;
         double suma = 0;
-        double iva;
+        double iva = 0;
         gridPedido.clear();
         for (List l : lista) {
             gridPedido.setValueAt(l.get(0), i, 0);
@@ -200,11 +201,12 @@ public class VentasEmpleados extends javax.swing.JDialog {
             gridPedido.setValueAt(l.get(4), i, 4);
             gridPedido.setValueAt(l.get(5), i, 5);
             i++;
-            suma += (double) l.get(5);
+
+            suma += new BigDecimal(l.get(5).toString()).doubleValue();
         }
-        iva = suma * 0.21;
-        suma += iva;
+        iva = 0.21 * suma;
         jTextFieldIva.setText(Convert.format(iva, 2));
+        suma += iva;
         jTextFieldTotal.setText(Convert.format(suma, 2));
     }//GEN-LAST:event_jComboBoxPedidosItemStateChanged
 
@@ -271,7 +273,9 @@ public class VentasEmpleados extends javax.swing.JDialog {
 
     private void cargarComboBox() {
         List<Integer> lista = pedidos.allPed(id);
-
+        if (lista == null) {
+            return;
+        }
         for (Integer i : lista) {
             jComboBoxPedidos.addItem(Integer.toString(i));
         }
@@ -279,11 +283,14 @@ public class VentasEmpleados extends javax.swing.JDialog {
     }
 
     private void iniciaGrid() {
-        System.out.println(jComboBoxPedidos.getSelectedItem().toString());
+        if (jComboBoxPedidos.getItemCount() == 0) {
+            return;
+        }
         List<List> lista = pedidos.findById(Integer.parseInt(jComboBoxPedidos.getSelectedItem().toString()));
+
         int i = 0;
-        BigDecimal suma = new BigDecimal(0);
-        BigDecimal iva = new BigDecimal(0);
+        double suma = 0;
+        double iva = 0;
         for (List l : lista) {
             gridPedido.setValueAt(l.get(0), i, 0);
             gridPedido.setValueAt(l.get(1), i, 1);
@@ -292,12 +299,12 @@ public class VentasEmpleados extends javax.swing.JDialog {
             gridPedido.setValueAt(l.get(4), i, 4);
             gridPedido.setValueAt(l.get(5), i, 5);
             i++;
-            suma.add((BigDecimal) l.get(5));
+            suma += new BigDecimal(l.get(5).toString()).doubleValue();
         }
 
-        iva.add(suma.multiply(Convert.parseBigDecimal("0.21")));
-        suma.add(iva);
+        iva = 0.21 * suma;
         jTextFieldIva.setText(Convert.format(iva, 2));
+        suma += iva;
         jTextFieldTotal.setText(Convert.format(suma, 2));
     }
 }
