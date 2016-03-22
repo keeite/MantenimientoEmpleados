@@ -79,6 +79,10 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Oficina");
 
+        jComboBoxOficina.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--Seleccionar--" }));
+
+        jComboBoxCargo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--Seleccionar--" }));
+
         jButton1.setText("BUSCAR");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -158,6 +162,11 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         jButtonEstadistica.setText("Estadistica");
 
         jButtonLimpiar.setText("Limpiar campos");
+        jButtonLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLimpiarActionPerformed(evt);
+            }
+        });
 
         jButtonSalir.setText("Salir");
         jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
@@ -221,6 +230,16 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_jButtonSalirActionPerformed
+
+    //Boton limpiar campos
+    private void jButtonLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLimpiarActionPerformed
+        jTextFieldNombre.setText("");
+        jTextFieldNumEmple.setText("");
+        jTextFieldAlta.setText("");
+        jTextFieldNaci.setText("");
+        jComboBoxCargo.setSelectedIndex(0);
+        jComboBoxOficina.setSelectedIndex(0);
+    }//GEN-LAST:event_jButtonLimpiarActionPerformed
 
     /**
      * @param args the command line arguments
