@@ -225,7 +225,7 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
 
-        if (JOptionPane.showConfirmDialog(this, "Seguro que desea salir?", "Cerrar aplicacion", JOptionPane.OK_CANCEL_OPTION) == 0) {
+        if (JOptionPane.showConfirmDialog(this, "¿Seguro que desea salir?", "Cerrar aplicacion", JOptionPane.OK_CANCEL_OPTION) == 0) {
             System.exit(0);
         }
 
