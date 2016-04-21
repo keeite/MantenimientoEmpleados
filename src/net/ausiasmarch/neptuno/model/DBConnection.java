@@ -29,6 +29,7 @@ public class DBConnection {
     /**
      * Obtiene una conexion a la BD
      *
+     * @param driver
      * @return Connection
      */
     public Connection getConnection(DriverType driver) {
@@ -110,6 +111,5 @@ public class DBConnection {
                 }
             }
         }
-
     }
 }

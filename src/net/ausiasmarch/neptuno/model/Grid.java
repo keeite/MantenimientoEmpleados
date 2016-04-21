@@ -2,18 +2,20 @@ package net.ausiasmarch.neptuno.model;
 
 /**
  * Grid.java
- * 
+ *
  * @author Luis
  */
-
 import java.awt.Rectangle;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableRowSorter;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableColumnModel;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -21,9 +23,9 @@ import java.awt.event.MouseEvent;
  */
 public class Grid extends JTable {
 
-    private DefaultTableModel defaultTableModel = new DefaultTableModel();
-    private DefaultTableCellRenderer defaultTableCellRenderer =
-                      new DefaultTableCellRenderer();
+    private final DefaultTableModel defaultTableModel = new DefaultTableModel();
+    private final DefaultTableCellRenderer defaultTableCellRenderer
+            = new DefaultTableCellRenderer();
 
     // Constructor
     public SimpleTableModel getSimpleTableModel() {
@@ -154,5 +156,104 @@ public class Grid extends JTable {
     public void setVisibleColumn(int column, boolean flag) {
         defaultTableCellRenderer.setVisible(flag);
         this.getColumnModel().getColumn(column).setCellRenderer(defaultTableCellRenderer);
+    }
+
+    // Rellena este grid con un List<List>
+    public void fillFromList(List<List> lista) {
+        int i = 0;
+        for (List sLista : lista) {
+            for (int j = 0; j < sLista.size(); j++) {
+                setValueAt(sLista.get(j), i, j);
+            }
+            i++;
+        }
+    }
+
+    // Rellena este grid con un List<List> y un array de imagenes
+    public void fillFromList(List<List> lista, Object[] objects) {
+        int i = 0, col = 0, num;
+
+        for (List sLista : lista) {
+            num = sLista.size();
+            for (int j = 0; j < num; j++) {
+                setValueAt(sLista.get(j), i, j);
+            }
+            col = num - 1;
+            // Agregamos imagenes en columnas restantes
+            for (int j = 0; j < objects.length; j++) {
+                setValueAt(objects[j], i, j + col + 1);
+            }
+            i++;
+        }
+    }
+
+    // Rellena este grid con un List<List>
+    public void fillFromList(List<List> lista, List objects) {
+        int i = 0, col = 0;
+        for (List sLista : lista) {
+            for (int j = 0; j < sLista.size(); j++) {
+                setValueAt(sLista.get(j), i, j);
+                col = j;
+            }
+            // Agregamos imagenes en columnas restantes
+            for (int j = 0; j < objects.size(); j++) {
+                setValueAt(objects.get(j), i, j + col);
+            }
+            i++;
+        }
+    }
+
+    public void setTypeColumnAndEditDelete(List lista, String[] columns) {
+        TableModel tb = getModeloGridEditDelete(lista, columns);
+        setModel(tb);
+    }
+
+    public void setTypeColumn(List lista, String[] columns) {
+        TableModel tb = getModeloGrid(lista, columns);
+        setModel(tb);
+    }
+
+    private TableModel getModeloGrid(List lista, String[] columns) {
+        List<Class> colClass = new ArrayList<>();
+        for (Object o : lista) {
+            colClass.add(o.getClass());
+        }
+        return new GridModel(colClass, columns);
+    }
+
+    private TableModel getModeloGridEditDelete(List lista, String[] columns) {
+        List<Class> colClass = new ArrayList<>();
+        for (Object o : lista) {
+            colClass.add(o.getClass());
+        }
+        colClass.add(ImageIcon.class);
+        colClass.add(ImageIcon.class);
+        return new GridModel(colClass, columns);
+    }
+
+    /**
+     * Modelo de datos para el grid que establece el tipo y nombre de cada
+     * columna
+     */
+    private class GridModel extends DefaultTableModel {
+
+        List<Class> colClass = new ArrayList<>();
+        String[] colNames;
+
+        public GridModel(List colClass, String[] colNames) {
+            this.colClass = colClass;
+            this.colNames = colNames;
+        }
+
+        @Override
+        public Class getColumnClass(int column) {
+            return colClass.get(column);
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return (String) colNames[column];
+        }
+
     }
 }

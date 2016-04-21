@@ -9,21 +9,20 @@ import java.sql.Date;
 
 /**
  *
- * @author a048598270y
+ * @author Soy yo
  */
 public class Empleado {
 
     private long numEmple;
-    private String nombre, apellidos, ciudad;
-    private int idCargo, idOficina;
+    private String nombre, apellidos;
+    private int idOficina, cargo;
     private Date naci, alta;
 
-    public Empleado(long numEmple, String nombre, String apellidos, String ciudad, int idCargo, int idOficina, Date naci, Date alta) {
-        this.nombre = nombre;
+    public Empleado(long numEmple, String nombre, String apellidos, int cargo, int idOficina, Date naci, Date alta) {
+        this.nombre = nombre;       //cambiar esto por el cambio en el cargo del metodo findAll
         this.apellidos = apellidos;
-        this.ciudad = ciudad;
         this.idOficina = idOficina;
-        this.idCargo = idCargo;
+        this.cargo = cargo;
         this.numEmple = numEmple;
         this.alta = alta;
         this.naci = naci;
@@ -70,20 +69,12 @@ public class Empleado {
         this.apellidos = apellidos;
     }
 
-    public String getCiudad() {
-        return ciudad;
+    public int getCargo() {
+        return cargo;
     }
 
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
-
-    public int getIdCargo() {
-        return idCargo;
-    }
-
-    public void setIdCargo(int idCargo) {
-        this.idCargo = idCargo;
+    public void setCargo(int cargo) {
+        this.cargo = cargo;
     }
 
     public int getIdOficina() {

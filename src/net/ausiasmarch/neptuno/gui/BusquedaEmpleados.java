@@ -5,11 +5,23 @@
  */
 package net.ausiasmarch.neptuno.gui;
 
+import com.sun.glass.events.KeyEvent;
+import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import net.ausiasmarch.common.Convert;
+import net.ausiasmarch.neptuno.dao.CargoDAO;
 import net.ausiasmarch.neptuno.dao.EmpleadoDAO;
+import net.ausiasmarch.neptuno.dao.OficinaDAO;
+import net.ausiasmarch.neptuno.entity.Cargo;
 import net.ausiasmarch.neptuno.entity.Empleado;
+import net.ausiasmarch.neptuno.entity.Oficina;
+import net.ausiasmarch.neptuno.model.Operation;
+import net.ausiasmarch.neptuno.model.RenderGrid;
 
 /**
  *
@@ -18,8 +30,11 @@ import net.ausiasmarch.neptuno.entity.Empleado;
 public class BusquedaEmpleados extends javax.swing.JFrame {
 
     EmpleadoDAO empleadoDAO = new EmpleadoDAO();
-    
-    
+    CargoDAO cargoDAO = new CargoDAO();
+    OficinaDAO oficinaDAO = new OficinaDAO();
+    ImageIcon editar = new ImageIcon("editar.png");
+    ImageIcon borrar = new ImageIcon("eliminar.png");
+
     public BusquedaEmpleados() {
         initComponents();
         iniciaGrid();
@@ -35,6 +50,8 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<String>();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jTextFieldNombre = new javax.swing.JTextField();
@@ -48,13 +65,20 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jComboBoxOficina = new javax.swing.JComboBox();
         jComboBoxCargo = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
+        jButtonBusqueda = new javax.swing.JButton();
         jButtonNuevo = new javax.swing.JButton();
         jButtonEstadistica = new javax.swing.JButton();
         jButtonLimpiar = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         gridEmpleados = new net.ausiasmarch.neptuno.model.Grid();
+
+        jList1.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(jList1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -73,8 +97,29 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Fecha Nacimiento");
 
+        jTextFieldNaci.setForeground(new java.awt.Color(153, 153, 153));
+        jTextFieldNaci.setText("dd/mm/aaaa");
+        jTextFieldNaci.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextFieldNaciMouseClicked(evt);
+            }
+        });
+        jTextFieldNaci.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextFieldNaciKeyReleased(evt);
+            }
+        });
+
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("Fecha Alta");
+
+        jTextFieldAlta.setForeground(new java.awt.Color(153, 153, 153));
+        jTextFieldAlta.setText("dd/mm/aaaa");
+        jTextFieldAlta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextFieldAltaMouseClicked(evt);
+            }
+        });
 
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Oficina");
@@ -83,81 +128,94 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
 
         jComboBoxCargo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--Seleccionar--" }));
 
-        jButton1.setText("BUSCAR");
+        jButtonBusqueda.setText("BUSCAR");
+        jButtonBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBusquedaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonBusqueda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldNaci, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jTextFieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(33, 33, 33)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(5, 5, 5)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldNumEmple))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextFieldAlta, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(12, 12, 12))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(19, 19, 19)
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextFieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addComponent(jTextFieldAlta, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(28, 28, 28)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextFieldNumEmple, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                            .addComponent(jTextFieldNaci))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(3, 3, 3)
-                                .addComponent(jLabel3))
+                            .addComponent(jLabel3)
                             .addComponent(jLabel7))
-                        .addGap(7, 7, 7)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBoxCargo, 0, 137, Short.MAX_VALUE)
-                            .addComponent(jComboBoxOficina, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jComboBoxCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxOficina, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(33, 33, 33)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(12, 12, 12)
+                            .addComponent(jLabel2))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jTextFieldNumEmple, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
+                        .addGap(8, 8, 8)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel3)
+                                .addComponent(jComboBoxCargo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jTextFieldNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel1))
+                                .addComponent(jLabel1)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jTextFieldNumEmple, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel2))
+                                .addComponent(jLabel5)
+                                .addComponent(jTextFieldNaci, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jComboBoxCargo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(46, 46, 46)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jTextFieldNaci, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBoxOficina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7)
-                            .addComponent(jTextFieldAlta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6))))
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                                .addComponent(jComboBoxOficina, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel7)
+                                .addComponent(jTextFieldAlta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel6)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addComponent(jButtonBusqueda)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jButtonNuevo.setText("Nuevo");
+        jButtonNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNuevoActionPerformed(evt);
+            }
+        });
 
         jButtonEstadistica.setText("Estadistica");
 
@@ -183,6 +241,12 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
 
             }
         ));
+        gridEmpleados.setRowSelectionAllowed(false);
+        gridEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                gridEmpleadosMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(gridEmpleados);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -192,8 +256,6 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 647, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButtonNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -201,23 +263,25 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonLimpiar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                        .addComponent(jButtonSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonNuevo)
                     .addComponent(jButtonEstadistica)
                     .addComponent(jButtonLimpiar)
                     .addComponent(jButtonSalir))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
@@ -241,6 +305,83 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
         jComboBoxOficina.setSelectedIndex(0);
     }//GEN-LAST:event_jButtonLimpiarActionPerformed
 
+    private void gridEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_gridEmpleadosMouseClicked
+        Point punto = evt.getPoint();
+        int row = gridEmpleados.rowAtPoint(punto);
+        int col = gridEmpleados.columnAtPoint(punto);
+        long id = (long) gridEmpleados.getValueAt(row, 2);
+
+        switch (col) {
+            case 7:
+                new MantEmpleados(null, true, id, Operation.EDIT).setVisible(true);
+                break;
+            case 8:
+                if (JOptionPane.showConfirmDialog(null, "Seguro que quieres eliminar este vendedor?", "Eliminar vendedor", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == 0) {
+                    //empleadoDAO.delete(id);
+                }
+                break;
+            default:
+
+                break;
+        }
+
+    }//GEN-LAST:event_gridEmpleadosMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButtonBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBusquedaActionPerformed
+        if (estaVacio()) {
+            gridEmpleados.clear();
+            iniciaGrid();
+        } else {
+            if (validarDatos()) {
+
+                gridEmpleados.clear();
+
+                List<String> listaDatos = new ArrayList<>();
+
+                listaDatos.add(0, jTextFieldNombre.getText());  //Nombre de empleado
+                listaDatos.add(1, jTextFieldNumEmple.getText());  //ID de empleado
+                listaDatos.add(2, jComboBoxCargo.getSelectedItem().toString());  //Cargo del empleado en letras
+                listaDatos.add(3, jTextFieldAlta.getText().equals("dd/mm/aaaa") ? "" : jTextFieldAlta.getText());  //Fecha de alta de empleado
+                listaDatos.add(4, jTextFieldNaci.getText().equals("dd/mm/aaaa") ? "" : jTextFieldNaci.getText());  //Fecha de nacimiento
+                listaDatos.add(5, jComboBoxOficina.getSelectedItem().toString());  //Oficina del empleado
+
+                List<List> lista;
+
+                lista = empleadoDAO.busquedaEmpleados(listaDatos);
+
+                llenarGrid(lista);
+            }
+        }
+    }//GEN-LAST:event_jButtonBusquedaActionPerformed
+
+    private void jTextFieldAltaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldAltaMouseClicked
+        if (jTextFieldAlta.getText().equals("dd/mm/aaaa")) {
+            jTextFieldAlta.setText("");
+            jTextFieldAlta.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_jTextFieldAltaMouseClicked
+
+    private void jTextFieldNaciMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldNaciMouseClicked
+        if (jTextFieldNaci.getText().equals("dd/mm/aaaa")) {
+            jTextFieldNaci.setText("");
+            jTextFieldNaci.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_jTextFieldNaciMouseClicked
+
+    private void jTextFieldNaciKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldNaciKeyReleased
+        if (jTextFieldAlta.getText().equals("dd/mm/aaaa")) {
+            jTextFieldAlta.setText("");
+            jTextFieldAlta.setForeground(Color.BLACK);
+        }
+    }//GEN-LAST:event_jTextFieldNaciKeyReleased
+
+    private void jButtonNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNuevoActionPerformed
+        new MantEmpleados(this, true, empleadoDAO.newKey(), Operation.NEW).setVisible(true);
+    }//GEN-LAST:event_jButtonNuevoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -254,47 +395,132 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void iniciaGrid() {
-        String[] columnas = {"Oficina", "Ciudad", "Id Empleado", "Nombre", "Cargo", "Nacimiento", "Alta", " ", " "};
+        String[] columnas = {"Oficina", "Ciudad", "Id", "Nombre", "Cargo", "Nacimiento", "Alta", " ", " "};
         List<Empleado> lista = empleadoDAO.findAll();
         int fila = 0;
-        
+        String cargo;
+        String oficina;
+
         gridEmpleados.setColumnIdentifiers(columnas);
-        
+
         for (Empleado e : lista) {
+            cargo = cargoDAO.findById((long)e.getCargo()).getDescripcion();
+            oficina = oficinaDAO.findById((long)e.getIdOficina()).getCiudad();
+            System.out.println(cargo);
             gridEmpleados.setValueAt(e.getIdOficina(), fila, 0);
-            gridEmpleados.setValueAt(e.getCiudad(), fila, 1);   //ciudad de la oficina
+            gridEmpleados.setValueAt(oficina, fila, 1);   //ciudad de la oficina
             gridEmpleados.setValueAt(e.getNumEmple(), fila, 2);
             gridEmpleados.setValueAt(e.getNombre() + " " + e.getApellidos(), fila, 3);
-            gridEmpleados.setValueAt(e.getIdCargo(), fila, 4);  //nombre del cargo, no numero
+            gridEmpleados.setValueAt(cargo, fila, 4);  //nombre del cargo, no numero
             gridEmpleados.setValueAt(e.getNaci(), fila, 5);
             gridEmpleados.setValueAt(e.getAlta(), fila, 6);
-            
+            gridEmpleados.setValueAt(editar, fila, 7);
+            gridEmpleados.setValueAt(borrar, fila, 8);
+
             fila += 1;
         }
-        
+
+        ajustarGrid(columnas);
+
     }
-    
+
+    private void llenarGrid(List<List> lista) {
+        String[] columnas = {"Oficina", "Ciudad", "Id", "Nombre", "Cargo", "Nacimiento", "Alta", " ", " "};
+        Object[] imagenes = {editar, borrar};
+        
+        gridEmpleados.setColumnIdentifiers(columnas);
+
+        gridEmpleados.setTypeColumnAndEditDelete(lista.get(0), columnas);
+        
+        gridEmpleados.fillFromList(lista, imagenes);
+
+        ajustarGrid(columnas);
+
+    }
+
     private void llenarComboBox() {
-        
-        List<Integer> lista = empleadoDAO.idCargo();
-        
-        for (int i = 0; i < lista.size(); i++) {
-            jComboBoxCargo.addItem(lista.get(i));
+
+        List<String> listaCargo = empleadoDAO.cargo();
+
+        for (int i = 0; i < listaCargo.size(); i++) {
+            jComboBoxCargo.addItem(listaCargo.get(i));
         }
-        
-        lista = empleadoDAO.idOficina();
-        
-        for (int i = 0; i < lista.size(); i++) {
-            jComboBoxOficina.addItem(lista.get(i));
+
+        List<Integer> listaOfi = empleadoDAO.idOficina();
+
+        for (int i = 0; i < listaOfi.size(); i++) {
+            jComboBoxOficina.addItem(listaOfi.get(i));
         }
-        
+
+    }
+
+    private void ajustarGrid(String[] cabecera) {
+
+        gridEmpleados.getTableHeader().setReorderingAllowed(false);
+        gridEmpleados.widthColumn(7, 30);
+        gridEmpleados.widthColumn(8, 30);
+        for (int i = 0; i < cabecera.length; i++) {
+            gridEmpleados.getColumnModel().getColumn(i).setCellRenderer(new RenderGrid());
+        }
+    }
+
+    private boolean validarDatos() {
+
+        if (!jTextFieldNumEmple.getText().isEmpty()) {
+            if (!Convert.isValidInt(jTextFieldNumEmple.getText())) {
+                mensaje("El campo Empleado no es válido");
+                return false;
+            }
+        }
+
+        if (!jTextFieldAlta.getText().isEmpty() && !jTextFieldAlta.getText().equals("dd/mm/aaaa")) {
+            if (!Convert.isValidDate(jTextFieldAlta.getText())) {
+                mensaje("La fecha de alta introducida no es válida");
+                return false;
+            }
+        }
+
+        if (!jTextFieldNaci.getText().isEmpty() && !jTextFieldNaci.getText().equals("dd/mm/aaaa")) {
+            if (!Convert.isValidDate(jTextFieldNaci.getText())) {
+                mensaje("La fecha de nacimiento introducida no es válida");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void mensaje(String men) {
+        JOptionPane.showMessageDialog(this, men);
+    }
+
+    private boolean estaVacio() {
+        if (!jTextFieldNombre.getText().isEmpty()) {
+            return false;
+        }
+        if (!jTextFieldNumEmple.getText().isEmpty()) {
+            return false;
+        }
+        if ((!jTextFieldAlta.getText().isEmpty()) && !jTextFieldAlta.getText().equals("dd/mm/aaaa")) {
+            return false;
+        }
+        if ((!jTextFieldNaci.getText().isEmpty()) && !jTextFieldNaci.getText().equals("dd/mm/aaaa")) {
+            return false;
+        }
+        if (jComboBoxCargo.getSelectedIndex() != 0) {
+            return false;
+        }
+        if (jComboBoxOficina.getSelectedIndex() != 0) {
+            return false;
+        }
+        return true;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private net.ausiasmarch.neptuno.model.Grid gridEmpleados;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonBusqueda;
     private javax.swing.JButton jButtonEstadistica;
     private javax.swing.JButton jButtonLimpiar;
     private javax.swing.JButton jButtonNuevo;
@@ -307,13 +533,14 @@ public class BusquedaEmpleados extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextFieldAlta;
     private javax.swing.JTextField jTextFieldNaci;
     private javax.swing.JTextField jTextFieldNombre;
     private javax.swing.JTextField jTextFieldNumEmple;
     // End of variables declaration//GEN-END:variables
-
-
+    // Refactorizar la variable sql.Date de Empleado
 }

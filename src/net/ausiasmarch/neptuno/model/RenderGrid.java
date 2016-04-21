@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -98,7 +99,14 @@ public class RenderGrid extends JLabel implements TableCellRenderer {
             setBackground(Color.BLUE);
             setForeground(Color.WHITE);
         }
-
+        
+        if (value instanceof ImageIcon) {
+            ImageIcon icono = (ImageIcon) value;
+            setIcon(icono);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setText("");
+        }
+            
         return this;
     }
 }
